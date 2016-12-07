@@ -1,0 +1,21 @@
+# OS
+Thumbs.db
+.DS_Store
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+#libファイルを含める(!以降のパターン文字列が示すファイル or ディレクトリを無視しない)
+!/lib/*.jar
+!/*/lib/*.jar
+
+# Eclipse
+.metadata
+.recommenders
+.project
+.classpath
+.settings
+bin/
+work/
