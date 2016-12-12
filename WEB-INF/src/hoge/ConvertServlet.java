@@ -61,7 +61,9 @@ public class ConvertServlet extends HttpServlet {
         PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 	    
 	    Sheet sheet = wb.getSheetAt(0);
-	    Row row = sheet.getRow(0);
+	    Row rowTemp = sheet.getRow(0);
+	    int lastRow = sheet.getLastRowNum();
+	    int lastCol = rowTemp.getLastCellNum();
 	    
 	    //System.out.println("行の最初行数" + sheet.getFirstRowNum());
 	    //System.out.println("行の最大行数" + sheet.getLastRowNum());
@@ -69,18 +71,33 @@ public class ConvertServlet extends HttpServlet {
 	    //これはなぜか1足された値になる(Java Docより)
 	    //System.out.println("行の最大列数" + row.getLastCellNum());
 	    
-	    for (int i = 0 ; i < 6 ; i++){
-	        Cell cell = row.getCell(i);
-	        if (cell != null){
-	        	//System.out.println(cell.getStringCellValue());
-	        	//row.createCell(i).setCellValue("Check!");
-	        	//cell.setCellValue("check!");
-	        	pw.print(DOUBLEQUOT + cell.getStringCellValue() + DOUBLEQUOT);
-	        	pw.print(COMMA);
-	        }
+	    for(int rowNum = 0 ; rowNum < lastRow ; rowNum++){
+	    	Row row = sheet.getRow(rowNum);
+	    	for(int colNum = 0 ; colNum < lastCol ; colNum++){
+	    		Cell cell = row.getCell(colNum);
+	    		pw.print(DOUBLEQUOT + cell.getStringCellValue() + DOUBLEQUOT);
+	        	if(colNum != lastCol - 1){
+	        		pw.print(COMMA);
+	        	}
+	    	}
+	    	pw.println();
 	    }
 	    //ファイルに書き出す
-        pw.close();
+	    pw.close();
+	    
+	    
+//	    for (int i = 0 ; i < 6 ; i++){
+//	        Cell cell = row.getCell(i);
+//	        if (cell != null){
+//	        	//System.out.println(cell.getStringCellValue());
+//	        	//row.createCell(i).setCellValue("Check!");
+//	        	//cell.setCellValue("check!");
+//	        	pw.print(DOUBLEQUOT + cell.getStringCellValue() + DOUBLEQUOT);
+//	        	pw.print(COMMA);
+//	        }
+//	    }
+//	    //ファイルに書き出す
+//        pw.close();
 	    
 	    
 	    //workbookへ上書き
