@@ -5,13 +5,38 @@
 <title>Convert Excel to CSV</title>
 </head>
 <body>
+<h2>Convert from Excel to CSV</h2>
 
 
-Excel to CSV
+<!--　まだ使わない 
+<script>
+function OnFileSelectButtonClick() {
+	var fileRef = document.getElementById("selfile");
+	var outFrame = document.getElementById("selectedFile");
+	var strSelectedFile = "";
+	for (i = 0; i < fileRef.files.length; i++) {
+		strSelectedFile = strSelectedFile + fileRef.files[i].name +"<br/>";
+	}
+	outFrame.innerHTML = strSelectedFile;
+}
+</script>
+
+ファイルを選択するボタン
+<input type="file" id="selfile" multiple><br/>
+
+選択ファイルを表示するボタン
+<input id="Button2" type="button" value="選択ファイルを表示" onclick="OnFileSelectButtonClick();"><br/>
+<p id="selectedFile"></p>
+ -->
+
+
+<!-- servletへする送信ボタン -->
 <form action=ConvertServlet method=post>
+	対象ファイルがあるディレクトリを入力してください<br/>
+	<input type=text name=targetDir id=targetDir size="100"><p>
 	<input type=submit value=submit>
+	<input type=reset value=reset>
 </form>
-
 
 </body>
 </html>

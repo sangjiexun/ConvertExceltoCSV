@@ -1,6 +1,7 @@
 package hoge;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -35,11 +36,30 @@ public class ConvertServlet extends HttpServlet {
 
 	public static final String COMMA = ",";
 	public static final String DOUBLEQUOT = "\"";
+	public String TARGETDIR = "";
 
 	@SuppressWarnings("deprecation")
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("START");
-
+		
+		System.out.println(request.getParameter("targetDir"));
+		
+		Validation vali = new Validation();
+		if(!vali.checkNullString(request.getParameter("targetDir"))){
+			request.setAttribute("InputError", "nullString");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/jsp/InputError.jsp");
+			dispatcher.forward(request, response);
+			return;
+		}else{
+			TARGETDIR = request.getParameter("targetDir");
+		}
+		
+		File dir = new File(TARGETDIR);
+		String[] files = dir.list();
+		for (int i = 0; i < files.length; i++) {
+	        //System.out.println((i + 1) + ":    " + files[i]);
+	    }
+		
 		FileInputStream in = null;
 		Workbook wb = null;
 
@@ -70,10 +90,10 @@ public class ConvertServlet extends HttpServlet {
 		int lastCol = rowTemp.getLastCellNum();
 
 		// System.out.println("行の最初行数" + sheet.getFirstRowNum());
-		System.out.println("行の最大行数" + sheet.getLastRowNum());
+		//System.out.println("行の最大行数" + sheet.getLastRowNum());
 		// System.out.println("行の最初列数" + rowTemp.getFirstCellNum());
 		// これはなぜか1足された値になる(Java Docより)
-		System.out.println("行の最大列数" + rowTemp.getLastCellNum());
+		//System.out.println("行の最大列数" + rowTemp.getLastCellNum());
 
 		for (int rowNum = 0; rowNum <= lastRow; rowNum++) {
 			Row row = sheet.getRow(rowNum);
@@ -86,58 +106,49 @@ public class ConvertServlet extends HttpServlet {
 						switch (cell.getCellType()) {
 						case Cell.CELL_TYPE_NUMERIC: // 0
 							if (DateUtil.isCellDateFormatted(cell)) {
-								System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
-										+ cell.getCellType() + " " + "Date:" + cell.getDateCellValue());
+//								System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
+//										+ cell.getCellType() + " " + "Date:" + cell.getDateCellValue());
 								
-								//SimpleDateFormat sdf = new SimpleDateFormat("yyyy/M/d HH:mm");
 								SimpleDateFormat sdf = new SimpleDateFormat("yyyy/M/d");
-						        //System.out.println(sdf.format(cell.getDateCellValue()));
 								String strDate = sdf.format(cell.getDateCellValue()) + " 23:00";
 								//pw.print(DOUBLEQUOT + cell.getDateCellValue() + DOUBLEQUOT);
 								pw.print(DOUBLEQUOT + strDate + DOUBLEQUOT);
 							} else {
-								System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
-										+ cell.getCellType() + " " + "Numeric:" + cell.getNumericCellValue());
+//								System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
+//										+ cell.getCellType() + " " + "Numeric:" + cell.getNumericCellValue());
 								pw.print(DOUBLEQUOT + cell.getNumericCellValue() + DOUBLEQUOT);
 							}
 							break;
 						case Cell.CELL_TYPE_STRING: // 1
-							System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
-									+ cell.getCellType() + " " + "String:" + cell.getStringCellValue());
+//							System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
+//									+ cell.getCellType() + " " + "String:" + cell.getStringCellValue());
 							pw.print(DOUBLEQUOT + cell.getStringCellValue() + DOUBLEQUOT);
 							break;
 						case Cell.CELL_TYPE_FORMULA: // 2
-							// System.out.println("Formula:" +
-							// cell.getCellFormula());
-
 							CreationHelper crateHelper = wb.getCreationHelper();
 							FormulaEvaluator evaluator = crateHelper.createFormulaEvaluator();
 							evaluator.evaluateInCell(cell);
-							System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
-									+ cell.getCellType() + " " + "Formula:" + evaluator.evaluateInCell(cell));
+//							System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
+//									+ cell.getCellType() + " " + "Formula:" + evaluator.evaluateInCell(cell));
 							pw.print(DOUBLEQUOT + evaluator.evaluateInCell(cell) + DOUBLEQUOT);
-							// pw.print(DOUBLEQUOT + cell.getCellFormula() +
-							// DOUBLEQUOT);
 							break;
 						case Cell.CELL_TYPE_BLANK: // 3
-							System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
-									+ cell.getCellType() + " " + "Blank:");
+//							System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
+//									+ cell.getCellType() + " " + "Blank:");
 							pw.print(DOUBLEQUOT + "" + DOUBLEQUOT);
 							break;
 						case Cell.CELL_TYPE_BOOLEAN: // 4
-							System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
-									+ cell.getCellType() + " " + "Boolean:" + cell.getBooleanCellValue());
+//							System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
+//									+ cell.getCellType() + " " + "Boolean:" + cell.getBooleanCellValue());
 							pw.print(DOUBLEQUOT + cell.getBooleanCellValue() + DOUBLEQUOT);
 							break;
 						case Cell.CELL_TYPE_ERROR: // 5
-							System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
-									+ cell.getCellType() + " " + "Error:" + cell.getErrorCellValue());
+//							System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
+//									+ cell.getCellType() + " " + "Error:" + cell.getErrorCellValue());
 							pw.print(DOUBLEQUOT + cell.getErrorCellValue() + DOUBLEQUOT);
 							break;
 						default:
 						}
-						// pw.print(DOUBLEQUOT + cell.getStringCellValue() +
-						// DOUBLEQUOT);
 						if (colNum != lastCol - 1) {
 							pw.print(COMMA);
 						}
