@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -86,7 +88,13 @@ public class ConvertServlet extends HttpServlet {
 							if (DateUtil.isCellDateFormatted(cell)) {
 								System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
 										+ cell.getCellType() + " " + "Date:" + cell.getDateCellValue());
-								pw.print(DOUBLEQUOT + cell.getDateCellValue() + DOUBLEQUOT);
+								
+								//SimpleDateFormat sdf = new SimpleDateFormat("yyyy/M/d HH:mm");
+								SimpleDateFormat sdf = new SimpleDateFormat("yyyy/M/d");
+						        //System.out.println(sdf.format(cell.getDateCellValue()));
+								String strDate = sdf.format(cell.getDateCellValue()) + " 23:00";
+								//pw.print(DOUBLEQUOT + cell.getDateCellValue() + DOUBLEQUOT);
+								pw.print(DOUBLEQUOT + strDate + DOUBLEQUOT);
 							} else {
 								System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
 										+ cell.getCellType() + " " + "Numeric:" + cell.getNumericCellValue());
