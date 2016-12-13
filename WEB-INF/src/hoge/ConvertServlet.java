@@ -15,7 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -33,8 +35,7 @@ public class ConvertServlet extends HttpServlet {
 	public static final String DOUBLEQUOT = "\"";
 
 	@SuppressWarnings("deprecation")
-	public void doPost(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("START");
 
 		FileInputStream in = null;
@@ -58,7 +59,6 @@ public class ConvertServlet extends HttpServlet {
 
 		// 出力先csvファイルを作成
 		// 2番目の引数をtrueにすると追記モード、falseにすると上書きモード
-		System.out.println("a");
 		FileWriter fw = new FileWriter("/Users/aa352872/Desktop/JIKKEN.csv", false);
 		PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
@@ -68,54 +68,72 @@ public class ConvertServlet extends HttpServlet {
 		int lastCol = rowTemp.getLastCellNum();
 
 		// System.out.println("行の最初行数" + sheet.getFirstRowNum());
-		// System.out.println("行の最大行数" + sheet.getLastRowNum());
+		System.out.println("行の最大行数" + sheet.getLastRowNum());
 		// System.out.println("行の最初列数" + rowTemp.getFirstCellNum());
 		// これはなぜか1足された値になる(Java Docより)
-		// System.out.println("行の最大列数" + rowTemp.getLastCellNum());
+		System.out.println("行の最大列数" + rowTemp.getLastCellNum());
 
 		for (int rowNum = 0; rowNum <= lastRow; rowNum++) {
 			Row row = sheet.getRow(rowNum);
-			for (int colNum = 0; colNum < lastCol; colNum++) {
-				Cell cell = row.getCell(colNum);
+			// System.out.println("getRow" + sheet.getRow(rowNum).toString());
+			if (row != null) {
+				for (int colNum = 0; colNum < lastCol; colNum++) {
+					Cell cell = row.getCell(colNum);
+					// System.out.println("getCell" + row.getCell(colNum));
+					if (cell != null) {
+						switch (cell.getCellType()) {
+						case Cell.CELL_TYPE_NUMERIC: // 0
+							if (DateUtil.isCellDateFormatted(cell)) {
+								System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
+										+ cell.getCellType() + " " + "Date:" + cell.getDateCellValue());
+								pw.print(DOUBLEQUOT + cell.getDateCellValue() + DOUBLEQUOT);
+							} else {
+								System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
+										+ cell.getCellType() + " " + "Numeric:" + cell.getNumericCellValue());
+								pw.print(DOUBLEQUOT + cell.getNumericCellValue() + DOUBLEQUOT);
+							}
+							break;
+						case Cell.CELL_TYPE_STRING: // 1
+							System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
+									+ cell.getCellType() + " " + "String:" + cell.getStringCellValue());
+							pw.print(DOUBLEQUOT + cell.getStringCellValue() + DOUBLEQUOT);
+							break;
+						case Cell.CELL_TYPE_FORMULA: // 2
+							// System.out.println("Formula:" +
+							// cell.getCellFormula());
 
-				System.out.println("cell type:" + cell.getCellType());
-
-				switch (cell.getCellType()) {
-				case Cell.CELL_TYPE_NUMERIC: // 0
-					if (DateUtil.isCellDateFormatted(cell)) {
-						System.out.println("Date:" + cell.getDateCellValue());
-						pw.print(DOUBLEQUOT + cell.getDateCellValue() + DOUBLEQUOT);
-					} else {
-						System.out.println("Numeric:" + cell.getNumericCellValue());
-						pw.print(DOUBLEQUOT + cell.getNumericCellValue() + DOUBLEQUOT);
+							CreationHelper crateHelper = wb.getCreationHelper();
+							FormulaEvaluator evaluator = crateHelper.createFormulaEvaluator();
+							evaluator.evaluateInCell(cell);
+							System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
+									+ cell.getCellType() + " " + "Formula:" + evaluator.evaluateInCell(cell));
+							pw.print(DOUBLEQUOT + evaluator.evaluateInCell(cell) + DOUBLEQUOT);
+							// pw.print(DOUBLEQUOT + cell.getCellFormula() +
+							// DOUBLEQUOT);
+							break;
+						case Cell.CELL_TYPE_BLANK: // 3
+							System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
+									+ cell.getCellType() + " " + "Blank:");
+							pw.print(DOUBLEQUOT + "" + DOUBLEQUOT);
+							break;
+						case Cell.CELL_TYPE_BOOLEAN: // 4
+							System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
+									+ cell.getCellType() + " " + "Boolean:" + cell.getBooleanCellValue());
+							pw.print(DOUBLEQUOT + cell.getBooleanCellValue() + DOUBLEQUOT);
+							break;
+						case Cell.CELL_TYPE_ERROR: // 5
+							System.out.println("(row,col) = (" + rowNum + "," + colNum + ") " + "cell type:"
+									+ cell.getCellType() + " " + "Error:" + cell.getErrorCellValue());
+							pw.print(DOUBLEQUOT + cell.getErrorCellValue() + DOUBLEQUOT);
+							break;
+						default:
+						}
+						// pw.print(DOUBLEQUOT + cell.getStringCellValue() +
+						// DOUBLEQUOT);
+						if (colNum != lastCol - 1) {
+							pw.print(COMMA);
+						}
 					}
-					break;
-				case Cell.CELL_TYPE_STRING: // 1
-					System.out.println("String:" + cell.getStringCellValue());
-					pw.print(DOUBLEQUOT + cell.getStringCellValue() + DOUBLEQUOT);
-					break;
-				case Cell.CELL_TYPE_FORMULA: // 2
-					System.out.println("Formula:" + cell.getCellFormula());
-					pw.print(DOUBLEQUOT + cell.getCellFormula() + DOUBLEQUOT);
-					break;
-				case Cell.CELL_TYPE_BLANK: // 3
-					System.out.println("Blank:");
-					pw.print(DOUBLEQUOT + "" + DOUBLEQUOT);
-					break;
-				case Cell.CELL_TYPE_BOOLEAN: // 4
-					System.out.println("Boolean:" + cell.getBooleanCellValue());
-					pw.print(DOUBLEQUOT + cell.getBooleanCellValue() + DOUBLEQUOT);
-					break;
-				case Cell.CELL_TYPE_ERROR: // 5
-					System.out.println("Error:" + cell.getErrorCellValue());
-					pw.print(DOUBLEQUOT + cell.getErrorCellValue() + DOUBLEQUOT);
-					break;
-				default:
-				}
-				// pw.print(DOUBLEQUOT + cell.getStringCellValue() +
-				// DOUBLEQUOT);
-				if (colNum != lastCol - 1) {
-					pw.print(COMMA);
 				}
 			}
 			pw.println();
