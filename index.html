@@ -33,6 +33,7 @@ function OnFileSelectButtonClick() {
 <!-- servletへする送信ボタン -->
 <form action=ConvertServlet method=post>
 	対象ファイルがあるディレクトリを入力してください<br/>
+	*ファイルまで含めるとエラーになる<br/>
 	<input type=text name=targetDir id=targetDir size="100"><p>
 	<input type=submit value=submit>
 	<input type=reset value=reset>
