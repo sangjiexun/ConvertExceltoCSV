@@ -6,7 +6,7 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 
 public class OutputFileHandler {
-	final Logger logger = Logger.getLogger (Validation.class);
+	final Logger logger = Logger.getLogger (OutputFileHandler.class);
 	public static final String OUTPUTFILENAME = "forImport";
 	public static final String EXTENTION_CSV = ".csv";
 	

@@ -22,10 +22,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 public class ConvertServlet extends HttpServlet {
-	final Logger logger = Logger.getLogger(Validation.class);
-	/**
-	 * 
-	 */
+	final Logger logger = Logger.getLogger(ConvertServlet.class);
 	private static final long serialVersionUID = 1L;
 
 	public static final String COMMA = ",";
@@ -88,37 +85,42 @@ public class ConvertServlet extends HttpServlet {
 			FileWriter fw = new FileWriter(outputCSVFile, true);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
+			// 1シート目を取得
 			Sheet sheet = wb.getSheetAt(0);
+			// 1行目を取得
 			Row rowTemp = sheet.getRow(0);
+			// 行数を取得
 			int lastRow = sheet.getLastRowNum();
 			logger.trace("対象ファイル最大行数 = " + lastRow);
+			// 列数を取得
 			int lastCol = rowTemp.getLastCellNum(); // これはなぜか1足された値になる(JavaDocより)
 			logger.trace("対象ファイル最大列数 + 1 = " + lastCol);
 
 			ExcelHandler exh = new ExcelHandler();
 
 			for (int rowNum = 0; rowNum <= lastRow; rowNum++) {
-				Row row = sheet.getRow(rowNum);
 				// 2ファイルめ以降の1行目(ヘッダー)をskipする
 				if (convertExcelFiles != 1 && rowNum == 0) {
 					continue;
 				}
-				// System.out.println("getRow" +
-				// sheet.getRow(rowNum).toString());
+				Row row = sheet.getRow(rowNum);
+				
 				if (row != null) {
 					for (int colNum = 0; colNum < lastCol; colNum++) {
 						Cell cell = row.getCell(colNum);
-
+						//cellの内容を取得
 						if (cell != null) {
 							pw.print(exh.getCellCSVValue(wb, cell));
-
 							if (colNum != lastCol - 1) {
 								pw.print(COMMA);
 							}
 						}
 					}
+					//最後に改行を入れる
+					pw.println();
+				}else{
+					//Nothing
 				}
-				pw.println();
 			}
 			// ファイルに書き出す
 			pw.close();
