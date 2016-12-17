@@ -50,6 +50,7 @@ public class ConvertServlet extends HttpServlet {
 		String[] files = dir.list();
 		FileInputStream in = null;
 		Workbook wb = null;
+		Sheet sheet = null;
 
 		logger.trace("選択フォルダ内のファイル合計 = " + files.length);
 		int convertExcelFiles = 0;
@@ -85,8 +86,13 @@ public class ConvertServlet extends HttpServlet {
 			FileWriter fw = new FileWriter(outputCSVFile, true);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
+			ExcelHandler exh = new ExcelHandler();
 			// 1シート目を取得
-			Sheet sheet = wb.getSheetAt(0);
+			//Sheet sheet = wb.getSheetAt(0);
+			//シートを順番に調べて対象を返す
+			sheet = exh.getSheetName(wb);
+			
+			
 			// 1行目を取得
 			Row rowTemp = sheet.getRow(0);
 			// 行数を取得
@@ -96,7 +102,7 @@ public class ConvertServlet extends HttpServlet {
 			int lastCol = rowTemp.getLastCellNum(); // これはなぜか1足された値になる(JavaDocより)
 			logger.trace("対象ファイル最大列数 + 1 = " + lastCol);
 
-			ExcelHandler exh = new ExcelHandler();
+			
 			for (int rowNum = 0; rowNum <= lastRow; rowNum++) {
 				// 2ファイルめ以降の1行目(ヘッダー)をskipする
 				if (convertExcelFiles != 1 && rowNum == 0) {

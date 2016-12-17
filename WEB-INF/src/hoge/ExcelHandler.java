@@ -1,18 +1,41 @@
 package hoge;
 
 import java.text.SimpleDateFormat;
+import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 
 public class ExcelHandler {
 	final Logger logger = Logger.getLogger(ExcelHandler.class);
 	public static final String DOUBLEQUOT = "\"";
+	
+	//sheet名を取得する
+	public Sheet getSheetName(Workbook wb) {
+	 	String sheetName = "";
+	 	Sheet sheet = null;
+
+	 	Iterator<Sheet> sheets = wb.sheetIterator();
+		while (sheets.hasNext()) {
+			sheet = sheets.next();
+			sheetName = sheet.getSheetName();
+			logger.trace("シート名 = " + sheetName);
+
+			if (sheetName != "更新履歴" && sheetName != "記入例 " && sheetName != "各列の書き方 " && sheetName != "Ta運用フロー "
+					&& sheetName != "各ケースの更新方法 " && sheetName != "テストケース作成更新した場合 ") {
+				break;
+			}
+		}
+		return sheet;
+//		return "aaa";
+//		return DOUBLEQUOT + getCellValue(wb , cell) + DOUBLEQUOT;
+	}
 	
 	//cellの内容を取得する
 	public String getCellCSVValue(Workbook wb , Cell cell) {
