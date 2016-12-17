@@ -16,12 +16,13 @@ public class ExcelHandler {
 	
 	//cellの内容を取得する
 	public String getCellCSVValue(Workbook wb , Cell cell) {
-		return getCellValue(wb , cell);
+		return DOUBLEQUOT + getCellValue(wb , cell) + DOUBLEQUOT;
 	}
 	
 	//TYPEに合わせてcellの内容を取得する
 	@SuppressWarnings("deprecation")
 	public String getCellValue(Workbook wb , Cell cell) {
+		String strCellIndex = "(row.col) = (" + cell.getRowIndex() + "," + cell.getColumnIndex() + ") ";
 		String tempCellValue = "";
 		String strCellDateValue = "";
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/M/d");
@@ -32,39 +33,39 @@ public class ExcelHandler {
 			//日付型 or 書式「全般」の和暦で20160101以降の日付
 			if (DateUtil.isCellDateFormatted(cell) || cell.getNumericCellValue() > 42370) {
 				strCellDateValue = sdf.format(cell.getDateCellValue()) + " 22:00";
-				logger.trace("Cell.CELL_TYPE_NUMERIC:" + "(row.col) = (" + cell.getRowIndex() + "," + cell.getColumnIndex() + ")" + " cellValue = " + strCellDateValue);
-				tempCellValue = DOUBLEQUOT + strCellDateValue + DOUBLEQUOT;
+				logger.trace("Cell.CELL_TYPE_NUMERIC:" + strCellIndex + "cellValue = " + strCellDateValue);
+				tempCellValue = strCellDateValue;
 			} else {
-				logger.trace("Cell.CELL_TYPE_NUMERIC:" + "(row.col) = (" + cell.getRowIndex() + "," + cell.getColumnIndex() + ")" + " cellValue = " + cell);
-				tempCellValue = DOUBLEQUOT + cell.getNumericCellValue() + DOUBLEQUOT;
+				logger.trace("Cell.CELL_TYPE_NUMERIC:" + strCellIndex + "cellValue = " + cell);
+				tempCellValue = String.valueOf(cell.getNumericCellValue());
 			}
 			break;
 		case Cell.CELL_TYPE_STRING: // 1
-			logger.trace("Cell.CELL_TYPE_STRING:" + "(row.col) = (" + cell.getRowIndex() + "," + cell.getColumnIndex() + ")" + " cellValue = " + cell);
-			tempCellValue = DOUBLEQUOT + cell.getStringCellValue() + DOUBLEQUOT;
+			logger.trace("Cell.CELL_TYPE_STRING:" + strCellIndex + "cellValue = " + cell);
+			tempCellValue = cell.getStringCellValue();
 			break;
 		case Cell.CELL_TYPE_FORMULA: // 2
 			CreationHelper crateHelper = wb.getCreationHelper();
 			FormulaEvaluator evaluator = crateHelper.createFormulaEvaluator();
 			evaluator.evaluateInCell(cell);
-			logger.trace("Cell.CELL_TYPE_FORMULA:" + "(row.col) = (" + cell.getRowIndex() + "," + cell.getColumnIndex() + ")" + " cellValue = " + cell);
-			tempCellValue = DOUBLEQUOT + evaluator.evaluateInCell(cell) + DOUBLEQUOT;
+			logger.trace("Cell.CELL_TYPE_FORMULA:" + strCellIndex + "cellValue = " + cell);
+			tempCellValue = String.valueOf(evaluator.evaluateInCell(cell));
 			break;
 		case Cell.CELL_TYPE_BLANK: // 3
-			logger.trace("Cell.CELL_TYPE_BLANK:" + "(row.col) = (" + cell.getRowIndex() + "," + cell.getColumnIndex() + ")" + " cellValue = " + cell);
-			tempCellValue = DOUBLEQUOT + "" + DOUBLEQUOT;
+			logger.trace("Cell.CELL_TYPE_BLANK:" + strCellIndex + "cellValue = " + cell);
+			tempCellValue = "";
 			break;
 		case Cell.CELL_TYPE_BOOLEAN: // 4
-			logger.trace("Cell.CELL_TYPE_BOOLEAN:" + "(row.col) = (" + cell.getRowIndex() + "," + cell.getColumnIndex() + ")" + " cellValue = " + cell);
-			tempCellValue = DOUBLEQUOT + cell.getBooleanCellValue() + DOUBLEQUOT;
+			logger.trace("Cell.CELL_TYPE_BOOLEAN:" + strCellIndex + "cellValue = " + cell);
+			tempCellValue = String.valueOf(cell.getBooleanCellValue());
 			break;
 		case Cell.CELL_TYPE_ERROR: // 5
-			logger.trace("Cell.CELL_TYPE_ERROR:" + "(row.col) = (" + cell.getRowIndex() + "," + cell.getColumnIndex() + ")" + " cellValue = " + cell);
-			tempCellValue = DOUBLEQUOT + cell.getErrorCellValue() + DOUBLEQUOT;
+			logger.trace("Cell.CELL_TYPE_ERROR:" + strCellIndex + "cellValue = " + cell);
+			tempCellValue = String.valueOf(cell.getErrorCellValue());
 			break;
 		default:
-			logger.trace("default:" + "(row.col) = (" + cell.getRowIndex() + "," + cell.getColumnIndex() + ")" + " cellValue = " + cell);
-			tempCellValue = DOUBLEQUOT + "" + DOUBLEQUOT;
+			logger.trace("default:" + strCellIndex + "cellValue = " + cell);
+			tempCellValue = "";
 		}
 		return tempCellValue;
 	}
