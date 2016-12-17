@@ -97,7 +97,6 @@ public class ConvertServlet extends HttpServlet {
 			logger.trace("対象ファイル最大列数 + 1 = " + lastCol);
 
 			ExcelHandler exh = new ExcelHandler();
-
 			for (int rowNum = 0; rowNum <= lastRow; rowNum++) {
 				// 2ファイルめ以降の1行目(ヘッダー)をskipする
 				if (convertExcelFiles != 1 && rowNum == 0) {
