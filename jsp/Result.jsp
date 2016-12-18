@@ -11,6 +11,25 @@
 </head>
 
 <body>
-<h2>resultだよ</h2>
+<h2>Result</h2>
+
+<h3>Input Excel File</h3>
+<%
+ArrayList<String> arrayInFile = (ArrayList<String>)request.getAttribute("arrayInFile");
+for(Iterator<String> iter = arrayInFile.iterator(); iter.hasNext(); ){
+    out.println(iter.next() + "<br/>");
+}
+%>
+
+<h3>Skip Excel File</h3>
+<%
+ArrayList<String> arraySkipFile = (ArrayList<String>)request.getAttribute("arraySkipFile");
+for(Iterator<String> iter = arraySkipFile.iterator(); iter.hasNext(); ){
+    out.println(iter.next() + "<br/>");
+}
+%>
+
+
+
 </body>
 </html>

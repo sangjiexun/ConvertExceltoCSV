@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -51,6 +52,8 @@ public class ConvertServlet extends HttpServlet {
 		FileInputStream in = null;
 		Workbook wb = null;
 		Sheet sheet = null;
+		ArrayList<String> arrayInFile = new ArrayList<String>();
+		ArrayList<String> arraySkipFile = new ArrayList<String>();
 
 		logger.trace("選択フォルダ内のファイル合計 = " + files.length);
 		int convertExcelFiles = 0;
@@ -60,9 +63,11 @@ public class ConvertServlet extends HttpServlet {
 				// エクセルファイルのみを対象に読み込む
 				if (files[i].indexOf("xls") != -1) {
 					convertExcelFiles++;
+					arrayInFile.add(files[i]);
 					logger.trace("convert対象ファイル = " + files[i] + " 読み込みファイル数 = " + convertExcelFiles);
 					in = new FileInputStream(TARGETDIR + "/" + files[i]);
 				} else {
+					arraySkipFile.add(files[i]);
 					logger.trace("skipファイル(Excelでない) = " + files[i]);
 					continue;
 				}
@@ -112,16 +117,23 @@ public class ConvertServlet extends HttpServlet {
 				}
 				Row row = sheet.getRow(rowNum);
 				
+				
 				if (row != null) {
 					for (int colNum = 0; colNum < lastCol; colNum++) {
+						
 						Cell cell = row.getCell(colNum);
 						//cellの内容を取得
 						if (cell != null) {
+							
+							String outputCellValue = exh.getCellCSVValue(wb, cell);
 							//1列目のcellがblankなら次の行へ
-							if(colNum == 0 && exh.getCellCSVValue(wb, cell).equals("\"\"")){
+							//1列目のcellがスペースのみなら次の行へ
+							//HACK
+							if(colNum == 0 && (outputCellValue.equals("\"\"") || outputCellValue.equals("\"　\""))){
 								break;
 							}
-							pw.print(exh.getCellCSVValue(wb, cell));
+							
+							pw.print(outputCellValue);
 							if (colNum != lastCol - 1) {
 								pw.print(COMMA);
 							}else{
@@ -141,6 +153,8 @@ public class ConvertServlet extends HttpServlet {
 			// ファイルに書き出す
 			pw.close();
 		}
+		request.setAttribute("arrayInFile", arrayInFile);
+		request.setAttribute("arraySkipFile", arraySkipFile);
 		logger.trace("出力ファイル合計 = " + convertExcelFiles);
 		logger.trace("END CONVERT PROCESS");
 
