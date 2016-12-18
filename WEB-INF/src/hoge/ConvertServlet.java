@@ -63,7 +63,7 @@ public class ConvertServlet extends HttpServlet {
 					logger.trace("convert対象ファイル = " + files[i] + " 読み込みファイル数 = " + convertExcelFiles);
 					in = new FileInputStream(TARGETDIR + "/" + files[i]);
 				} else {
-					logger.trace("skipファイル = " + files[i]);
+					logger.trace("skipファイル(Excelでない) = " + files[i]);
 					continue;
 				}
 				wb = WorkbookFactory.create(in);
@@ -91,7 +91,9 @@ public class ConvertServlet extends HttpServlet {
 			//Sheet sheet = wb.getSheetAt(0);
 			//シートを順番に調べて対象を返す
 			sheet = exh.getSheetName(wb);
-			
+			if(sheet == null){
+				continue;
+			}
 			
 			// 1行目を取得
 			Row rowTemp = sheet.getRow(0);
@@ -115,14 +117,23 @@ public class ConvertServlet extends HttpServlet {
 						Cell cell = row.getCell(colNum);
 						//cellの内容を取得
 						if (cell != null) {
+							//1列目のcellがblankなら次の行へ
+							if(colNum == 0 && exh.getCellCSVValue(wb, cell).equals("\"\"")){
+								break;
+							}
 							pw.print(exh.getCellCSVValue(wb, cell));
 							if (colNum != lastCol - 1) {
 								pw.print(COMMA);
+							}else{
+								//最後に改行を入れる
+								pw.println();
+							}
+						}else{
+							if(colNum == 0){
+								break;
 							}
 						}
 					}
-					//最後に改行を入れる
-					pw.println();
 				}else{
 					//Nothing
 				}

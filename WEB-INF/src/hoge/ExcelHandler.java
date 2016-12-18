@@ -22,19 +22,19 @@ public class ExcelHandler {
 	 	Sheet sheet = null;
 
 	 	Iterator<Sheet> sheets = wb.sheetIterator();
+	 	
 		while (sheets.hasNext()) {
 			sheet = sheets.next();
-			sheetName = sheet.getSheetName();
-			logger.trace("シート名 = " + sheetName);
+			sheetName = sheet.getSheetName().trim();
 
-			if (sheetName != "更新履歴" && sheetName != "記入例 " && sheetName != "各列の書き方 " && sheetName != "Ta運用フロー "
-					&& sheetName != "各ケースの更新方法 " && sheetName != "テストケース作成更新した場合 ") {
-				break;
+			if (!sheetName.equals("更新履歴") && !sheetName.equals("記入例") && !sheetName.equals("各列の書き方")
+					&& !sheetName.equals("Ta運用フロー") && !sheetName.equals("各ケースの更新方法")
+					&& !sheetName.equals("テストケース作成更新した場合")) {
+				logger.trace("HITシート名 = " + sheetName);
+				return sheet;
 			}
 		}
 		return sheet;
-//		return "aaa";
-//		return DOUBLEQUOT + getCellValue(wb , cell) + DOUBLEQUOT;
 	}
 	
 	//cellの内容を取得する
@@ -61,6 +61,10 @@ public class ExcelHandler {
 			} else {
 				logger.trace("Cell.CELL_TYPE_NUMERIC:" + strCellIndex + "cellValue = " + cell);
 				tempCellValue = String.valueOf(cell.getNumericCellValue());
+				//X.0のdouble型の文字列を強制的にintにする
+				if(tempCellValue.endsWith(".0")){
+					tempCellValue = tempCellValue.substring(0, tempCellValue.length()-2);
+				}
 			}
 			break;
 		case Cell.CELL_TYPE_STRING: // 1
