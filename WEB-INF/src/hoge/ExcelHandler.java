@@ -55,6 +55,7 @@ public class ExcelHandler {
 			//HACK
 			//日付型 or 書式「全般」の和暦で20160101以降の日付
 			if (DateUtil.isCellDateFormatted(cell) || cell.getNumericCellValue() > 42370) {
+//			if (DateUtil.isCellDateFormatted(cell) || cell.getNumericCellValue() > 942370) {
 				strCellDateValue = sdf.format(cell.getDateCellValue()) + " 22:00";
 				logger.trace("Cell.CELL_TYPE_NUMERIC:" + strCellIndex + "cellValue = " + strCellDateValue);
 				tempCellValue = strCellDateValue;
@@ -96,4 +97,6 @@ public class ExcelHandler {
 		}
 		return tempCellValue;
 	}
+	
+	
 }
