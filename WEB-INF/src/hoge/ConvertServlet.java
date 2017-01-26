@@ -155,23 +155,26 @@ public class ConvertServlet extends HttpServlet {
 							if (colNum != lastCol - 1) {
 								pw.print(COMMA);
 							} else {
-								//HACK**********************
-								//親子関係を設定するならここで実装する
-//								if(rowNum == 0){
-//									pw.print(COMMA + "テストケース親子区分");
-//								}else{
-//									pw.print(COMMA + "\"子\"");
-//								}
-								
-//								
-//								if(rowNum == 0){
-//									pw.print(COMMA + "テストケース親子区分" + COMMA + "検出元");
-//								}else{
-//									pw.print(COMMA + "\"子\"" + COMMA + "\"GroupC\"");
-//								}
-								
-								
-								//親子区分設定*****************
+								if(!request.getParameter("parentCategory").equals("nothing")){
+									if(rowNum == 0){
+										pw.print(COMMA + "テストケース親子区分");
+									}else if(request.getParameter("parentCategory").equals("parent")){
+										pw.print(COMMA + "\"親\"");
+									}else if(request.getParameter("parentCategory").equals("child")){
+										pw.print(COMMA + "\"子\"");
+									}
+								}
+								if(!request.getParameter("group").equals("nothing")){
+									if(rowNum == 0){
+										pw.print(COMMA + "検出元");
+									}else if(request.getParameter("group").equals("A")){
+										pw.print(COMMA + "\"GroupA\"");
+									}else if(request.getParameter("group").equals("B")){
+										pw.print(COMMA + "\"GroupB\"");
+									}else if(request.getParameter("group").equals("C")){
+										pw.print(COMMA + "\"GroupC\"");
+									}
+								}
 								
 								// 最後に改行を入れる
 								pw.println();
