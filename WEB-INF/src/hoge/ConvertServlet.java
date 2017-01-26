@@ -110,6 +110,8 @@ public class ConvertServlet extends HttpServlet {
 			logger.trace("対象ファイル最大列数 + 1 = " + lastCol);
 			//状況列の列index
 			int statusColIndex = 9999;
+			//ID列の列index
+			int IDColIndex = 9999;
 
 			for (int rowNum = 0; rowNum <= lastRow; rowNum++) {
 				// 2ファイルめ以降の1行目(ヘッダー)をskipする
@@ -131,6 +133,7 @@ public class ConvertServlet extends HttpServlet {
 							if(cell.getRowIndex() == 0 && outputCellValue.equals("\"状況\"")){
 								statusColIndex = colNum;
 							}
+							
 							
 							// 1列目のcellがblankなら次の行へ
 							// 1列目のcellがスペースのみなら次の行へ
@@ -154,11 +157,20 @@ public class ConvertServlet extends HttpServlet {
 							} else {
 								//HACK**********************
 								//親子関係を設定するならここで実装する
-								if(rowNum == 0){
-									pw.print(COMMA + "テストケース親子区分");
-								}else{
-									pw.print(COMMA + "\"子\"");
-								}
+//								if(rowNum == 0){
+//									pw.print(COMMA + "テストケース親子区分");
+//								}else{
+//									pw.print(COMMA + "\"子\"");
+//								}
+								
+//								
+//								if(rowNum == 0){
+//									pw.print(COMMA + "テストケース親子区分" + COMMA + "検出元");
+//								}else{
+//									pw.print(COMMA + "\"子\"" + COMMA + "\"GroupC\"");
+//								}
+								
+								
 								//親子区分設定*****************
 								
 								// 最後に改行を入れる

@@ -2,6 +2,8 @@ package hoge;
 
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -54,8 +56,8 @@ public class ExcelHandler {
 		case Cell.CELL_TYPE_NUMERIC: // 0
 			//HACK
 			//日付型 or 書式「全般」の和暦で20160101以降の日付
-			if (DateUtil.isCellDateFormatted(cell) || cell.getNumericCellValue() > 42370) {
-//			if (DateUtil.isCellDateFormatted(cell) || cell.getNumericCellValue() > 942370) {
+//			if (DateUtil.isCellDateFormatted(cell) || cell.getNumericCellValue() > 42370) {
+			if (DateUtil.isCellDateFormatted(cell) || cell.getNumericCellValue() > 9423790) {
 				strCellDateValue = sdf.format(cell.getDateCellValue()) + " 22:00";
 				logger.trace("Cell.CELL_TYPE_NUMERIC:" + strCellIndex + "cellValue = " + strCellDateValue);
 				tempCellValue = strCellDateValue;
@@ -78,6 +80,17 @@ public class ExcelHandler {
 			evaluator.evaluateInCell(cell);
 			logger.trace("Cell.CELL_TYPE_FORMULA:" + strCellIndex + "cellValue = " + cell);
 			tempCellValue = String.valueOf(evaluator.evaluateInCell(cell));
+			
+			//test
+			//XX-XX-XXXXのパターン
+			Pattern p = Pattern.compile("^[0-9]{1,2}+-[0-9]{1,2}+-[0-9]{4}+");
+			Matcher m = p.matcher(tempCellValue);
+			if(m.find()) {
+				String[] sps2 = tempCellValue.split("-");
+				tempCellValue = sps2[2] + "/" + sps2[1] + "/" + sps2[0] + " 22:00";
+			}
+			
+			
 			break;
 		case Cell.CELL_TYPE_BLANK: // 3
 			logger.trace("Cell.CELL_TYPE_BLANK:" + strCellIndex + "cellValue = " + cell);
