@@ -108,10 +108,6 @@ public class ConvertServlet extends HttpServlet {
 			// 列数を取得
 			int lastCol = rowTemp.getLastCellNum(); // これはなぜか1足された値になる(JavaDocより)
 			logger.trace("対象ファイル最大列数 + 1 = " + lastCol);
-			//状況列の列index
-			int statusColIndex = 9999;
-			//ID列の列index
-			int IDColIndex = 9999;
 
 			for (int rowNum = 0; rowNum <= lastRow; rowNum++) {
 				// 2ファイルめ以降の1行目(ヘッダー)をskipする
@@ -126,14 +122,7 @@ public class ConvertServlet extends HttpServlet {
 						Cell cell = row.getCell(colNum);
 						// cellの内容を取得
 						if (cell != null) {
-							
 							String outputCellValue = exh.getCellCSVValue(wb, cell);
-							//HACK
-							//状況列indexを記録する
-							if(cell.getRowIndex() == 0 && outputCellValue.equals("\"状況\"")){
-								statusColIndex = colNum;
-							}
-							
 							
 							// 1列目のcellがblankなら次の行へ
 							// 1列目のcellがスペースのみなら次の行へ
@@ -142,40 +131,11 @@ public class ConvertServlet extends HttpServlet {
 									|| outputCellValue.equals("\"____\""))) {
 								break;
 							}
-							
-							if(colNum == statusColIndex){
-								if(outputCellValue.equals("\"テスト実施完了\"")){
-									outputCellValue = "テスト結果検証";
-								}else if(outputCellValue.equals("\"テスト結果検証完了\"")){
-									outputCellValue = "完了";
-								}
-							}
 
 							pw.print(outputCellValue);
 							if (colNum != lastCol - 1) {
 								pw.print(COMMA);
 							} else {
-								if(!request.getParameter("parentCategory").equals("nothing")){
-									if(rowNum == 0){
-										pw.print(COMMA + "テストケース親子区分");
-									}else if(request.getParameter("parentCategory").equals("parent")){
-										pw.print(COMMA + "\"親\"");
-									}else if(request.getParameter("parentCategory").equals("child")){
-										pw.print(COMMA + "\"子\"");
-									}
-								}
-								if(!request.getParameter("group").equals("nothing")){
-									if(rowNum == 0){
-										pw.print(COMMA + "検出元");
-									}else if(request.getParameter("group").equals("A")){
-										pw.print(COMMA + "\"GroupA\"");
-									}else if(request.getParameter("group").equals("B")){
-										pw.print(COMMA + "\"GroupB\"");
-									}else if(request.getParameter("group").equals("C")){
-										pw.print(COMMA + "\"GroupC\"");
-									}
-								}
-								
 								// 最後に改行を入れる
 								pw.println();
 							}
