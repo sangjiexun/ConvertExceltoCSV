@@ -1,6 +1,6 @@
-# ConvertExceltoCSV
+#ConvertExceltoCSV
 
-## 概要
+##概要
 1. このツールはExcelをCSVファイルへ変換します
 2. Excelの全てのセルを"(ダブルクォート)で囲んだCSVファイルを出力します
 3. Windows、Macどちらでも同じ結果になります
