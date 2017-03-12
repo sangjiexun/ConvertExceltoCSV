@@ -27,10 +27,10 @@ public class ConvertServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	public static final String COMMA = ",";
-	// public static final String DOUBLEQUOT = "\"";
 	public String TARGETDIR = "";
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		logger.trace("START CONVERT PROCESS");
 		// nullString Validation check
 		Validation vali = new Validation();
@@ -90,12 +90,12 @@ public class ConvertServlet extends HttpServlet {
 			// 2番目の引数をtrueにすると追記モード、falseにすると上書きモード
 			FileWriter fw = new FileWriter(outputCSVFile, true);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
-
+			
 			ExcelHandler exh = new ExcelHandler();
 			// 1シート目を取得
-			// Sheet sheet = wb.getSheetAt(0);
+			sheet = wb.getSheetAt(0);
 			// シートを順番に調べて対象を返す
-			sheet = exh.getSheetName(wb);
+			//sheet = exh.getSheetName(wb);
 			if (sheet == null) {
 				continue;
 			}
@@ -124,14 +124,6 @@ public class ConvertServlet extends HttpServlet {
 						if (cell != null) {
 							String outputCellValue = exh.getCellCSVValue(wb, cell);
 							
-							// 1列目のcellがblankなら次の行へ
-							// 1列目のcellがスペースのみなら次の行へ
-							// HACK
-							if (colNum == 0 && (outputCellValue.equals("\"\"") || outputCellValue.equals("\"　\"")
-									|| outputCellValue.equals("\"____\""))) {
-								break;
-							}
-
 							pw.print(outputCellValue);
 							if (colNum != lastCol - 1) {
 								pw.print(COMMA);

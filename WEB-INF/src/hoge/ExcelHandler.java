@@ -54,20 +54,16 @@ public class ExcelHandler {
 
 		switch (cell.getCellType()) {
 		case Cell.CELL_TYPE_NUMERIC: // 0
-			//HACK
-			//日付型 or 書式「全般」の和暦で20160101以降の日付
-//			if (DateUtil.isCellDateFormatted(cell) || cell.getNumericCellValue() > 42370) {
-			if (DateUtil.isCellDateFormatted(cell) || cell.getNumericCellValue() > 9423790) {
-				strCellDateValue = sdf.format(cell.getDateCellValue()) + " 22:00";
+			//日付タイプと数値タイプは同じくCELL_TYPE_NUMERIC
+			//数値か日付かを判別するためにはDateUtilクラスで用意されているisCellDateFormattedメソッドを使用して判断する
+			//isCellDateFormattedがtrueを返した場合はセルのタイプは日付、falseを返した場合は数値タイプ
+			if (DateUtil.isCellDateFormatted(cell)) {
+				strCellDateValue = sdf.format(cell.getDateCellValue());
 				logger.trace("Cell.CELL_TYPE_NUMERIC:" + strCellIndex + "cellValue = " + strCellDateValue);
 				tempCellValue = strCellDateValue;
 			} else {
 				logger.trace("Cell.CELL_TYPE_NUMERIC:" + strCellIndex + "cellValue = " + cell);
 				tempCellValue = String.valueOf(cell.getNumericCellValue());
-				//X.0のdouble型の文字列を強制的にintにする
-				if(tempCellValue.endsWith(".0")){
-					tempCellValue = tempCellValue.substring(0, tempCellValue.length()-2);
-				}
 			}
 			break;
 		case Cell.CELL_TYPE_STRING: // 1
@@ -75,22 +71,12 @@ public class ExcelHandler {
 			tempCellValue = cell.getStringCellValue();
 			break;
 		case Cell.CELL_TYPE_FORMULA: // 2
+			//セルの値の計算結果を取得する
 			CreationHelper crateHelper = wb.getCreationHelper();
 			FormulaEvaluator evaluator = crateHelper.createFormulaEvaluator();
 			evaluator.evaluateInCell(cell);
 			logger.trace("Cell.CELL_TYPE_FORMULA:" + strCellIndex + "cellValue = " + cell);
 			tempCellValue = String.valueOf(evaluator.evaluateInCell(cell));
-			
-			//test
-			//XX-XX-XXXXのパターン
-			Pattern p = Pattern.compile("^[0-9]{1,2}+-[0-9]{1,2}+-[0-9]{4}+");
-			Matcher m = p.matcher(tempCellValue);
-			if(m.find()) {
-				String[] sps2 = tempCellValue.split("-");
-				tempCellValue = sps2[2] + "/" + sps2[1] + "/" + sps2[0] + " 22:00";
-			}
-			
-			
 			break;
 		case Cell.CELL_TYPE_BLANK: // 3
 			logger.trace("Cell.CELL_TYPE_BLANK:" + strCellIndex + "cellValue = " + cell);
