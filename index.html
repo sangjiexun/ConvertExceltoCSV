@@ -28,7 +28,8 @@ function OnFileSelectButtonClick() {
 <!-- servletへする送信ボタン -->
 <form action=ConvertServlet method=post>
 	CSV変換ファイル選択
-	<input type="file" name="targetFile[]" multiple="multiple" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" /><br/>
+	<input type="file" name="targetFile[]" multiple="multiple" 
+	accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" /><br/>
 	
 	対象ファイルがあるディレクトリを入力してください<br/>
 	*ファイルまで含めるとエラーになる<br/>
