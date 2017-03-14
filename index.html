@@ -26,8 +26,9 @@ function OnFileSelectButtonClick() {
 
  
 <!-- servletへする送信ボタン -->
-<form action=ConvertServlet method=post>
+<form action=ConvertServlet method=post enctype="multipart/form-data">
 	CSV変換ファイル選択
+	<!-- エクセルファイル(.xls、.xlsx)のみ許容 -->
 	<input type="file" name="targetFile[]" multiple="multiple" 
 	accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" /><br/>
 	

@@ -31,6 +31,11 @@ public class ConvertServlet extends HttpServlet {
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		
+		String aaa = request.getParameter("targetFile[]");
+		System.out.println(aaa);
+		
+		
 		logger.trace("START CONVERT PROCESS");
 		// nullString Validation check
 		Validation vali = new Validation();
@@ -46,6 +51,8 @@ public class ConvertServlet extends HttpServlet {
 		// 出力CSVファイル生成
 		OutputFileHandler ofh = new OutputFileHandler();
 		String outputCSVFile = ofh.createOutputFile("/Users/aa352872/Desktop/");
+		
+		
 
 		File dir = new File(TARGETDIR);
 		String[] files = dir.list();
