@@ -10,6 +10,8 @@ import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +24,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
+@WebServlet("/UploadServlet")
+@MultipartConfig(location="/tmp", maxFileSize=1048576)
 public class ConvertServlet extends HttpServlet {
 	final Logger logger = Logger.getLogger(ConvertServlet.class);
 	private static final long serialVersionUID = 1L;
@@ -31,10 +35,7 @@ public class ConvertServlet extends HttpServlet {
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		
-		String aaa = request.getParameter("targetFile[]");
-		System.out.println(aaa);
-		
+		System.out.println("para = " + request.getParameter("targetFile[]"));
 		
 		logger.trace("START CONVERT PROCESS");
 		// nullString Validation check
@@ -47,13 +48,11 @@ public class ConvertServlet extends HttpServlet {
 		} else {
 			TARGETDIR = request.getParameter("targetDir");
 		}
-
+		
 		// 出力CSVファイル生成
 		OutputFileHandler ofh = new OutputFileHandler();
 		String outputCSVFile = ofh.createOutputFile("/Users/aa352872/Desktop/");
 		
-		
-
 		File dir = new File(TARGETDIR);
 		String[] files = dir.list();
 		FileInputStream in = null;
