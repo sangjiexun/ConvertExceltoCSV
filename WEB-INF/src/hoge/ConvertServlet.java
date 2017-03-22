@@ -41,8 +41,12 @@ public class ConvertServlet extends HttpServlet {
 		LocalDateTime d = LocalDateTime.now();
 //		System.out.println("local time = " + d.toString());
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-		String text = d.format(formatter);
-		System.out.println("hiduke = " + text);
+		String uploadedFolderName = d.format(formatter);
+		System.out.println("hiduke = " + uploadedFolderName);
+		
+		//uploadファイル保存用フォルダ作成
+		File newdir = new File(getServletContext().getRealPath("/WEB-INF/") + uploadedFolderName);
+		newdir.mkdir();
 		
 		for (Part part : request.getParts()) {
 			System.out.println("------------------");
