@@ -39,21 +39,21 @@ public class ConvertServlet extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		LocalDateTime d = LocalDateTime.now();
-//		System.out.println("local time = " + d.toString());
+		//System.out.println("local time = " + d.toString());
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 		String uploadedFolderName = d.format(formatter);
-		System.out.println("hiduke = " + uploadedFolderName);
+		//System.out.println("hiduke = " + uploadedFolderName);
 		
 		//uploadファイル保存用フォルダ作成
 		File newdir = new File(getServletContext().getRealPath("/WEB-INF/") + uploadedFolderName);
 		newdir.mkdir();
 		
 		for (Part part : request.getParts()) {
-			System.out.println("------------------");
-			System.out.println("parts = " + part);
+			//System.out.println("------------------");
+			//System.out.println("parts = " + part);
 			String uploadedFileName = this.getFileName(part);
-			System.out.println("uploadedFileName = " + uploadedFileName);
-			part.write(getServletContext().getRealPath("/WEB-INF/uploaded") + "/" + uploadedFileName);
+			//System.out.println("uploadedFileName = " + uploadedFileName);
+			part.write(getServletContext().getRealPath("/WEB-INF/") + uploadedFolderName + "/" + uploadedFileName);
 		}
 		
 		
