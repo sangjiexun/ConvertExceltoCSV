@@ -39,26 +39,28 @@ public class ConvertServlet extends HttpServlet {
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		//uploadファイル保存用フォルダ作成
+		File uploadedFolder = new File(getServletContext().getRealPath("/WEB-INF/") + UPLOADEDFOLDER);
+		if(!uploadedFolder.exists()){
+			uploadedFolder.mkdir();
+			//System.out.println("uploadedFolder = " + uploadedFolder);
+		}
+		
 		LocalDateTime d = LocalDateTime.now();
 		//System.out.println("local time = " + d.toString());
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 		String uploadedFolderName = d.format(formatter);
 		//System.out.println("hiduke = " + uploadedFolderName);
-		
-		//uploadファイル保存用フォルダ作成
-		File uploadedFolder = new File(getServletContext().getRealPath("/WEB-INF/") + UPLOADEDFOLDER);
-		if(!uploadedFolder.exists()){
-			uploadedFolder.mkdir();
-		}
-		File newdir = new File(getServletContext().getRealPath("/WEB-INF/") + uploadedFolderName);
-		newdir.mkdir();
+		File timeStampFolder = new File(uploadedFolder + "/" + uploadedFolderName);
+		timeStampFolder.mkdir();
+		System.out.println("timeStampFolder = " + timeStampFolder);
 		
 		for (Part part : request.getParts()) {
 			//System.out.println("------------------");
 			//System.out.println("parts = " + part);
 			String uploadedFileName = this.getFileName(part);
-			//System.out.println("uploadedFileName = " + uploadedFileName);
-			part.write(getServletContext().getRealPath("/WEB-INF/") + uploadedFolderName + "/" + uploadedFileName);
+			System.out.println("uploadedFileName = " + uploadedFileName);
+			part.write(timeStampFolder + "/" + uploadedFileName);
 		}
 		
 		
