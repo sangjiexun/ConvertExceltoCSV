@@ -32,19 +32,14 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 public class ConvertServlet extends HttpServlet {
 	final Logger logger = Logger.getLogger(ConvertServlet.class);
 	private static final long serialVersionUID = 1L;
-	private static final String UPLOADEDFOLDER = "uploadedFolder";
-
+	
 	public static final String COMMA = ",";
 	public String TARGETDIR = "";
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		//uploadファイル保存用フォルダ作成
-		File uploadedFolder = new File(getServletContext().getRealPath("/WEB-INF/") + UPLOADEDFOLDER);
-		if(!uploadedFolder.exists()){
-			uploadedFolder.mkdir();
-			//System.out.println("uploadedFolder = " + uploadedFolder);
-		}
+		OutputFolderHandler ofh = new OutputFolderHandler();
+		String uploadedFolder = ofh.createOutputFolder(getServletContext().getRealPath("/WEB-INF/"));
 		
 		LocalDateTime d = LocalDateTime.now();
 		//System.out.println("local time = " + d.toString());
