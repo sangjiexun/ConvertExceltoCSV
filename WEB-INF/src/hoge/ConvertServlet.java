@@ -59,16 +59,6 @@ public class ConvertServlet extends HttpServlet {
 			part.write(targetFolder + "/" + uploadedFileName);
 		}
 		
-		
-		
-//		Part part = request.getPart("targetFile[]");
-//		System.out.println("part = " + part);
-//		String uploadedFileName = this.getFileName(part);
-//		System.out.println("uploadedFileName = " + uploadedFileName);
-//		System.out.println("real path = " + getServletContext().getRealPath("/WEB-INF/uploaded"));
-//		part.write(getServletContext().getRealPath("/WEB-INF/uploaded") + "/" + uploadedFileName);
-		
-		
 		logger.trace("START CONVERT PROCESS");
 		// nullString Validation check
 		Validation vali = new Validation();
