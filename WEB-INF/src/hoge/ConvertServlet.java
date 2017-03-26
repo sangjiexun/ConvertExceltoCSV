@@ -6,8 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
@@ -40,15 +38,7 @@ public class ConvertServlet extends HttpServlet {
 		
 		uploadedFolderHandler o = new uploadedFolderHandler();
 		String uploadedFolder = o.createUploadedFolder(getServletContext().getRealPath("/WEB-INF/"));
-		
-		LocalDateTime dt = LocalDateTime.now();
-		//System.out.println("local time = " + d.toString());
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-		String uploadedFolderName = dt.format(formatter);
-		//System.out.println("hiduke = " + uploadedFolderName);
-		File targetFolder = new File(uploadedFolder + "/" + uploadedFolderName);
-		targetFolder.mkdir();
-		System.out.println("timeStampFolder = " + targetFolder);
+		String targetFolder = o.createTargetFolder(uploadedFolder);
 		
 		//アップロードファイル全てを取得する
 		for (Part part : request.getParts()) {
