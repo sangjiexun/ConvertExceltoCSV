@@ -37,7 +37,9 @@ public class ConvertServlet extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		uploadedFolderHandler o = new uploadedFolderHandler();
+		//日次フォルダの親フォルダとなる「uploadedFolder」を作成する
 		String uploadedFolder = o.createUploadedFolder(getServletContext().getRealPath("/WEB-INF/"));
+		//uploadedFolder配下にtimestampのフォルダを作成する
 		String targetFolder = o.createTargetFolder(uploadedFolder);
 		
 		//アップロードファイル全てを取得する
