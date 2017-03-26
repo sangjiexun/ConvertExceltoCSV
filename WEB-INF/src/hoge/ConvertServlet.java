@@ -38,24 +38,25 @@ public class ConvertServlet extends HttpServlet {
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		OutputFolderHandler ofh = new OutputFolderHandler();
-		String uploadedFolder = ofh.createOutputFolder(getServletContext().getRealPath("/WEB-INF/"));
+		uploadedFolderHandler o = new uploadedFolderHandler();
+		String uploadedFolder = o.createUploadedFolder(getServletContext().getRealPath("/WEB-INF/"));
 		
-		LocalDateTime d = LocalDateTime.now();
+		LocalDateTime dt = LocalDateTime.now();
 		//System.out.println("local time = " + d.toString());
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-		String uploadedFolderName = d.format(formatter);
+		String uploadedFolderName = dt.format(formatter);
 		//System.out.println("hiduke = " + uploadedFolderName);
-		File timeStampFolder = new File(uploadedFolder + "/" + uploadedFolderName);
-		timeStampFolder.mkdir();
-		System.out.println("timeStampFolder = " + timeStampFolder);
+		File targetFolder = new File(uploadedFolder + "/" + uploadedFolderName);
+		targetFolder.mkdir();
+		System.out.println("timeStampFolder = " + targetFolder);
 		
+		//アップロードファイル全てを取得する
 		for (Part part : request.getParts()) {
-			//System.out.println("------------------");
 			//System.out.println("parts = " + part);
 			String uploadedFileName = this.getFileName(part);
-			System.out.println("uploadedFileName = " + uploadedFileName);
-			part.write(timeStampFolder + "/" + uploadedFileName);
+			//System.out.println("uploadedFileName = " + uploadedFileName);
+			//アップロードファイルを指定フォルダに書き出す
+			part.write(targetFolder + "/" + uploadedFileName);
 		}
 		
 		
