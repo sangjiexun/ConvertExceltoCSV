@@ -14,7 +14,6 @@ import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -35,7 +34,7 @@ public class ConvertServlet extends HttpServlet {
 	public String TARGETDIR = "";
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		logger.trace("START CONVERT PROCESS");
 		uploadHandler o = new uploadHandler();
 		//日次フォルダの親フォルダとなる「uploadedFolder」を作成する
 		String uploadedFolder = o.createUploadedFolder(getServletContext().getRealPath("/WEB-INF/"));
@@ -44,17 +43,17 @@ public class ConvertServlet extends HttpServlet {
 		//アップロードファイル全てを取得する
 		o.writeUploadedFile(request, targetFolder);
 		
-		logger.trace("START CONVERT PROCESS");
+		TARGETDIR = targetFolder;
 		// nullString Validation check
-		Validation vali = new Validation();
-		if (!vali.checkNullString(request.getParameter("targetDir"))) {
-			request.setAttribute("InputError", "nullString");
-			RequestDispatcher dispatcher = request.getRequestDispatcher("/jsp/InputError.jsp");
-			dispatcher.forward(request, response);
-			return;
-		} else {
-			TARGETDIR = request.getParameter("targetDir");
-		}
+//		Validation vali = new Validation();
+//		if (!vali.checkNullString(request.getParameter("targetDir"))) {
+//			request.setAttribute("InputError", "nullString");
+//			RequestDispatcher dispatcher = request.getRequestDispatcher("/jsp/InputError.jsp");
+//			dispatcher.forward(request, response);
+//			return;
+//		} else {
+//			TARGETDIR = request.getParameter("targetDir");
+//		}
 		
 		// 出力CSVファイル生成
 		OutputFileHandler ofh = new OutputFileHandler();
@@ -67,7 +66,7 @@ public class ConvertServlet extends HttpServlet {
 		Sheet sheet = null;
 		ArrayList<String> arrayInFile = new ArrayList<String>();
 		ArrayList<String> arraySkipFile = new ArrayList<String>();
-
+		
 		logger.trace("選択フォルダ内のファイル合計 = " + files.length);
 		int convertExcelFiles = 0;
 		for (int i = 0; i < files.length; i++) {
