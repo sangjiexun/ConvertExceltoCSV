@@ -56,7 +56,7 @@ public class ConvertServlet extends HttpServlet {
 //		}
 		
 		// 出力CSVファイル生成
-		OutputFileHandler ofh = new OutputFileHandler();
+		OutputHandler ofh = new OutputHandler();
 		String outputCSVFile = ofh.createOutputFile("/Users/aa352872/Desktop/");
 		
 		File dir = new File(TARGETDIR);
