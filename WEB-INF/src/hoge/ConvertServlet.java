@@ -36,20 +36,13 @@ public class ConvertServlet extends HttpServlet {
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		uploadedFolderHandler o = new uploadedFolderHandler();
+		uploadHandler o = new uploadHandler();
 		//日次フォルダの親フォルダとなる「uploadedFolder」を作成する
 		String uploadedFolder = o.createUploadedFolder(getServletContext().getRealPath("/WEB-INF/"));
 		//uploadedFolder配下にtimestampのフォルダを作成する
 		String targetFolder = o.createTargetFolder(uploadedFolder);
-		
 		//アップロードファイル全てを取得する
-		for (Part part : request.getParts()) {
-			//System.out.println("parts = " + part);
-			String uploadedFileName = this.getFileName(part);
-			//System.out.println("uploadedFileName = " + uploadedFileName);
-			//アップロードファイルを指定フォルダに書き出す
-			part.write(targetFolder + "/" + uploadedFileName);
-		}
+		o.writeUploadedFile(request, targetFolder);
 		
 		logger.trace("START CONVERT PROCESS");
 		// nullString Validation check
@@ -172,18 +165,4 @@ public class ConvertServlet extends HttpServlet {
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/jsp/Result.jsp");
 		dispatcher.forward(request, response);
 	}
-	
-	private String getFileName(Part part) {
-        String name = null;
-        for (String dispotion : part.getHeader("Content-Disposition").split(";")) {
-            if (dispotion.trim().startsWith("filename")) {
-                name = dispotion.substring(dispotion.indexOf("=") + 1).replace("\"", "").trim();
-                name = name.substring(name.lastIndexOf("\\") + 1);
-                break;
-            }
-        }
-        return name;
-    }
-	
-	
 }
