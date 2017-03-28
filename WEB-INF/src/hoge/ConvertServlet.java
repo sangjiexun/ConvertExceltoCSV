@@ -43,6 +43,10 @@ public class ConvertServlet extends HttpServlet {
 		//アップロードファイル全てを取得する
 		o.writeUploadedFile(request, targetFolder);
 		
+		//**************
+		// upload fileがなかったらexception発生
+		//**************
+		
 		TARGETDIR = targetFolder;
 		// nullString Validation check
 //		Validation vali = new Validation();
