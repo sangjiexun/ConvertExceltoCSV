@@ -19,14 +19,16 @@ public class Validation {
 	}
 	
 	public boolean checkNullUploadFile(HttpServletRequest request) throws IOException, ServletException{
-		boolean f = false;
 		
 		for (Part part : request.getParts()) {
-			if(part.getName() == null || part.getSubmittedFileName().length() == 0){
-				f = true;
+			//System.out.println("name = " + part.getName());
+			//System.out.println("size = " + part.getSize());
+			//System.out.println("filename = " + part.getSubmittedFileName());
+			if(part.getSubmittedFileName() == "" || part.getSize() == 0){
+				return false;	//uploadファイルなし
 			}
 			break;
 		}		
-		return f;
+		return true;	//uploadファイルあり
 	}
 }
