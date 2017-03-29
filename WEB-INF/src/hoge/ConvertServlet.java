@@ -35,6 +35,14 @@ public class ConvertServlet extends HttpServlet {
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		logger.trace("START CONVERT PROCESS");
+		Validation vali = new Validation();
+		if (!vali.checkNullUploadFile(request)) {
+			request.setAttribute("InputError", "nullString");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/jsp/InputError.jsp");
+			dispatcher.forward(request, response);
+			return;
+		} 
+		
 		UploadHandler o = new UploadHandler();
 		//日次フォルダの親フォルダとなる「uploadedFolder」を作成する
 		String uploadedFolder = o.createUploadedFolder(getServletContext().getRealPath("/WEB-INF/"));

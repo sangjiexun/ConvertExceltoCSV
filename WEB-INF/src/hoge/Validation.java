@@ -1,7 +1,6 @@
 package hoge;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,9 +22,10 @@ public class Validation {
 		boolean f = false;
 		
 		for (Part part : request.getParts()) {
-			if(part != null){
+			if(part.getName() == null || part.getSubmittedFileName().length() == 0){
 				f = true;
 			}
+			break;
 		}		
 		return f;
 	}
