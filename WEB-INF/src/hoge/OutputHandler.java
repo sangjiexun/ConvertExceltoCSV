@@ -1,5 +1,6 @@
 package hoge;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -15,9 +16,19 @@ public class OutputHandler {
 		
 		Date date = new Date();
         SimpleDateFormat sdfFileName = new SimpleDateFormat("yyyyMMddHHmmss");
-		outputCSVFile = dirPath + OUTPUTFILENAME + sdfFileName.format(date).toString() + EXTENTION_CSV;
+		outputCSVFile = dirPath + "/" + OUTPUTFILENAME + sdfFileName.format(date).toString() + EXTENTION_CSV;
 		logger.trace("出力CSVファイル = " + outputCSVFile);
 		
 		return outputCSVFile;
 	}
+	
+	public String createOutputFolder(String uploadFolderPath){
+		Date date = new Date();
+        SimpleDateFormat sdfFileName = new SimpleDateFormat("yyyyMMddHHmmss");
+        File o = new File(uploadFolderPath + "/csv" + sdfFileName.format(date).toString());
+        o.mkdir();
+        
+		return o.toString();
+	}
+	
 }

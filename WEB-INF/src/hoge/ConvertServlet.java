@@ -24,7 +24,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 
-
 @MultipartConfig(location="/tmp", maxFileSize=1048576)
 public class ConvertServlet extends HttpServlet {
 	final Logger logger = Logger.getLogger(ConvertServlet.class);
@@ -35,41 +34,37 @@ public class ConvertServlet extends HttpServlet {
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		logger.trace("START CONVERT PROCESS");
+		
+		// file validation check
 		Validation vali = new Validation();
 		if (!vali.checkNullUploadFile(request)) {
 			request.setAttribute("InputError", "nullString");
 			RequestDispatcher dispatcher = request.getRequestDispatcher("/jsp/InputError.jsp");
 			dispatcher.forward(request, response);
 			return;
-		} 
+		}
 		
-		UploadHandler o = new UploadHandler();
+		UploadHandler u = new UploadHandler();
 		//日次フォルダの親フォルダとなる「uploadedFolder」を作成する
-		String uploadedFolder = o.createUploadedFolder(getServletContext().getRealPath("/WEB-INF/"));
+		String uploadedFolder = u.createUploadedFolder(getServletContext().getRealPath("/WEB-INF/"));
 		//uploadedFolder配下にtimestampのフォルダを作成する
-		String targetFolder = o.createTargetFolder(uploadedFolder);
+		String targetFolder = u.createTargetFolder(uploadedFolder);
 		//アップロードファイル全てを取得する
-		o.writeUploadedFile(request, targetFolder);
-		
-		//**************
-		// upload fileがなかったらexception発生
-		//**************
+		u.writeUploadedFile(request, targetFolder);
 		
 		TARGETDIR = targetFolder;
-		// nullString Validation check
-//		Validation vali = new Validation();
-//		if (!vali.checkNullString(request.getParameter("targetDir"))) {
-//			request.setAttribute("InputError", "nullString");
-//			RequestDispatcher dispatcher = request.getRequestDispatcher("/jsp/InputError.jsp");
-//			dispatcher.forward(request, response);
-//			return;
-//		} else {
-//			TARGETDIR = request.getParameter("targetDir");
-//		}
+		
+		//csv保存用フォルダ作成
+		String csvFolder;
+		OutputHandler o = new OutputHandler();
+		csvFolder = o.createOutputFolder(TARGETDIR);		
+		
+		//****************************
 		
 		// 出力CSVファイル生成
 		OutputHandler ofh = new OutputHandler();
-		String outputCSVFile = ofh.createOutputFile("/Users/aa352872/Desktop/");
+		//String outputCSVFile = ofh.createOutputFile("/Users/aa352872/Desktop/");
+		String outputCSVFile = ofh.createOutputFile(csvFolder);
 		
 		File dir = new File(TARGETDIR);
 		String[] files = dir.list();
@@ -109,7 +104,7 @@ public class ConvertServlet extends HttpServlet {
 					System.out.println(e.toString());
 				}
 			}
-
+			
 			// 出力先csvファイルを作成
 			// 2番目の引数をtrueにすると追記モード、falseにすると上書きモード
 			FileWriter fw = new FileWriter(outputCSVFile, true);
