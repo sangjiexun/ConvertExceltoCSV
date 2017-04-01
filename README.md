@@ -1,5 +1,4 @@
-# Convert Excel to CSV
-
+# Convert Excel to CSV (20170331 飽きたからもういいや)
 ### 概要
 1. ExcelをCSVファイルへ変換します
 2. Excelの全てのセルを"(ダブルクォート)で囲んだCSVファイルを出力します
