@@ -13,6 +13,8 @@ public class UploadHandler {
 	
 	private static final String UPLOADEDFOLDER = "uploadedFolder";
 	
+	//全部loggerに変更
+	
 	public String createUploadedFolder(String realPath) {
 		//uploadファイル保存用フォルダ作成
 		File uploadedFolder = new File(realPath + UPLOADEDFOLDER);
